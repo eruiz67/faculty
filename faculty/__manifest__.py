@@ -27,6 +27,7 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/user_views.xml',
+        'wizards/enroll_wizard.xml',
         'views/actions.xml',
         'views/menus.xml',
         'views/templates.xml'

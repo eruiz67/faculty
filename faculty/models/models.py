@@ -73,7 +73,8 @@ class Student(models.Model):
             image = tools.image_colorize(image)
         return tools.image_resize_image_big(
             base64.b64encode(image))
-    #course_ids = fields.Many2many('faculty.course', string='Cursos')
+
+    course_ids = fields.Many2many('faculty.course', string='Cursos')
 
     age = fields.Integer(compute='_compute_age', string='Edad', store=True)
     
@@ -119,6 +120,18 @@ class Student(models.Model):
         tools.image_resize_images(vals)
         res = super(Student, self).write(vals)
         return res
+    
+    def action_enroll(self):
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'Matricular',
+            'res_model': 'faculty.enroll_wizard',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'context':{'student_id':self.id},
+            'target': 'new',
+        }
+        return action
     
 
 """

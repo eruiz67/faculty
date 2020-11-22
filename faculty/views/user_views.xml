@@ -19,7 +19,16 @@
         <field name="name">student.view.form</field>
         <field name="model">faculty.student</field>
         <field name="arch" type="xml">
+        
             <form string="Datos del estudiante" duplicate="false">
+            <header>
+
+                <button name="action_enroll" type="object"
+                        string="Matricular" class="btn btn-success"
+                        attrs="{'invisible': [('id','=',False)]}"
+                        />
+
+            </header>
                 <sheet>
                     <!--div class="oe_button_box" name="button_box">
                         <button name="toggle_active" type="object"
@@ -51,6 +60,16 @@
                          <field name="email" widget="email" />
                         </group>
                     </group>
+                    <notebook>
+                        <page name="courses" string="Cursos">
+                            <field name="course_ids" readonly="1" >
+                            <tree>
+                                <field name="name" />
+                                <field name="description" />
+                            </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="enroll_wizard_form_view" model="ir.ui.view">
+      <field name="name">enroll_wizard.view.form</field>
+      <field name="model">faculty.enroll_wizard</field>
+      <field name="arch" type="xml">
+        <form>
+            <group>
+                <group>
+                    <field name="course_id" />
+                </group>
+                <group>
+                   <field name="credits_required" />
+                </group>
+            </group>
+
+            <footer>
+                <button type="object" name="action_enroll"
+                    string="Matricular" class="oe_highlight"/>
+                <button special="cancel" string="Cancelar"/>
+            </footer>
+        </form>
+      </field >
+        </record>
+
+</odoo>
