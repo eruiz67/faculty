@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="faculty_root_menu"
+        name="Faculty"
+        sequence="10"/>
+
+    <menuitem
+        id="student_menu"
+        name="Estudiantes"
+        action="students_action"
+        parent="faculty_root_menu"
+        sequence="20"/>
+
+    <menuitem
+        id="courses_menu"
+        name="Cursos"
+        action="courses_action"
+        parent="faculty_root_menu"
+        sequence="30"/>
+
+</odoo>

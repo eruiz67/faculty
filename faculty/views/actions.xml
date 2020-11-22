@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="students_action" model="ir.actions.act_window">
+        <field name="name">Estudiantes</field>
+        <field name="res_model">faculty.student</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No hay estudiantes</p>
+        </field>
+    </record>
+
+    <record id="courses_action" model="ir.actions.act_window">
+        <field name="name">Cursos</field>
+        <field name="res_model">faculty.course</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No hay cursos</p>
+        </field>
+    </record>
+    
+
+</odoo>
