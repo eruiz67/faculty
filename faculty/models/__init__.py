@@ -1,3 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from . import models
+from . import student_models
+from . import res_users_models
+from . import professor_models

@@ -2,7 +2,7 @@
 <odoo>
     <menuitem
         id="faculty_root_menu"
-        name="Faculty"
+        name="Facultad"
         sequence="10"/>
 
     <menuitem
@@ -18,5 +18,12 @@
         action="courses_action"
         parent="faculty_root_menu"
         sequence="30"/>
+
+    <menuitem
+        id="professor_menu"
+        name="Profesores"
+        action="professors_action"
+        parent="faculty_root_menu"
+        sequence="40"/>
 
 </odoo>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="course_view_form" model="ir.ui.view">
+    <field name="name">faculty.course.view.form</field>
+    <field name="model">faculty.course</field>
+    <field name="arch" type="xml">
+        <form string="">
+            <field name="is_user_enrolled" invisible="1" />
+            <header>
+                <button name="action_enroll" type="object"
+                        string="Matricular" class="btn btn-success"
+                        attrs="{'invisible': ['|',('id','=',False),('is_user_enrolled','=',True)]}"
+                        />
+                <button name="action_quit" type="object"
+                        string="Dejar curso" class="btn btn-danger"
+                        attrs="{'invisible': ['|',('id','=',False),('is_user_enrolled','=',False)]}"
+                        confirm="Está usted a punto de dejar el curso, sus créditos no les serán devueltos ¿Seguro que desea dejar el curso?"
+                        />
+            </header>
+            <sheet>
+                <group>
+                    <group>
+                        <field name="name" /> 
+                        <field name="description" />      
+                    </group>
+                    <group>
+                        <field name="credits_required" />
+                    </group>
+                </group>
+                <notebook>
+                    <page name="professors" string="Profesores">
+                            <field name="professor_ids" widget="many2many" options="{'not_delete': True}">
+                                    <kanban quick_create="false" create="false" delete="false">
+                                        <field name="id"/>
+                                        <field name="name"/>
+                                        <field name="identification" />
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_global_click" style="max-width: 200px">
+                                                    <div class="o_kanban_record_top">
+                                                        <img t-att-src="kanban_image('faculty.professor', 'image_small', record.id.raw_value)" height="40" width="40" class="oe_avatar oe_kanban_avatar_smallbox mb0" alt="Avatar"/>
+                                                        <div class="o_kanban_record_headings ml8">
+                                                             <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                                        </div>
+                                                </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                    </page>
+                    <page name="students" string="Estudiantes">
+                            <field name="student_ids" widget="many2many" options="{'not_delete': True}">
+                                    <kanban quick_create="false" create="false" delete="false">
+                                        <field name="id"/>
+                                        <field name="name"/>
+                                        <field name="identification" />
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_global_click" style="max-width: 200px">
+                                                    <div class="o_kanban_record_top">
+                                                        <img t-att-src="kanban_image('faculty.student', 'image_small', record.id.raw_value)" height="40" width="40" class="oe_avatar oe_kanban_avatar_smallbox mb0" alt="Avatar"/>
+                                                        <div class="o_kanban_record_headings ml8">
+                                                             <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                                        </div>
+                                                </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="course_view_tree" model="ir.ui.view">
+    <field name="name">faculty.course.view.tree</field>
+    <field name="model">faculty.course</field>
+    <field name="arch" type="xml">
+        <form string="">
+            <sheet>
+                <field name="name" />
+                <field name="description" />
+            </sheet>
+        </form>
+    </field>
+</record>
+<record id="course_view_search_professor" model="ir.ui.view">
+    <field name="name">model.name.view.search</field>
+    <field name="model">faculty.course</field>
+    <field name="arch" type="xml">
+        <search string="">
+            <field name="name" />
+            <field name="description" />
+            <filter string="Mis cursos" name="mine" domain="[('is_user_professor','=',True)]"/>
+        </search>
+    </field>
+</record>
+
+</odoo>

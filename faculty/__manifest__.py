@@ -27,6 +27,8 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/user_views.xml',
+        'views/course_views.xml',
+        'views/professor_views.xml',
         'wizards/enroll_wizard.xml',
         'views/actions.xml',
         'views/menus.xml',

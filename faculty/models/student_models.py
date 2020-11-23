@@ -28,14 +28,102 @@ class Course(models.Model):
     description = fields.Char(string='Descripción', required=True)
     credits_required = fields.Integer(string='Creditos necesarios', required=True)
     #profesor_ids = fields.Many2many('res.users', string='Profesores')
-    #student_ids =  fields.Many2many('res.users', string='Estudiantes')
+    student_ids =  fields.Many2many('faculty.student', string='Estudiantes')
+    professor_ids  = fields.Many2many('faculty.professor', string='Profesores')
+    def action_enroll(self, parameter_list):
+        vals={}
+        if self.env.user.student_ids:
+            student = self.env.user.student_ids[0]
+            if self.id in student.course_ids.ids:
+                raise ValidationError("Usted ya se encuentra matriculado en este curso")
+            if student.qty_credits >= self.credits_required:
+                vals['qty_credits'] = student.qty_credits - self.credits_required
+                vals['course_ids'] = [(4, self.id)]
+            if vals:
+                student.write(vals)
+                message="Se ha matriculado en el curso {}".format(self.name)
+                student.message_post(body=message, subtype="mail.mt_note")
+            else:
+                raise ValidationError("No cuenta con suficientes c'reditos para matricular en este curso")
+            return True
+    
+    is_user_enrolled = fields.Boolean(compute='_compute_is_user_enrolled', string='Esta matriculado?')
+    
+    def action_quit(self):
+        vals={}
+        if self.env.user.student_ids:
+            student = self.env.user.student_ids[0]
+            if self.id not in student.course_ids.ids:
+                raise ValidationError("Usted no se encuentra matriculado en este curso")
+            else:
+                vals['course_ids'] = [(3, self.id)]
+                student.write(vals)
+                message="Ha canselado la matricula del curso {}".format(self.name)
+                student.message_post(body=message, subtype="mail.mt_note")
+
+        return True
+
+    def _compute_is_user_enrolled(self):
+        is_student = self.env.user.student_ids
+        if is_student:
+            student = self.env.user.student_ids[0]
+            for record in self:
+                if student and record.id in student.course_ids.ids:
+                    record.is_user_enrolled =  True
+                else:
+                    record.is_user_enrolled =  False
+        else:
+            for record in self:
+                record.is_user_enrolled =  False
+
+    is_user_professor = fields.Boolean(compute='_compute_is_user_professor', search='_search_is_user_professor', string='Eres profesor?')
+    
+
+    def _compute_is_user_professor(self):
+        is_professor = self.env.user.professor_ids
+        if is_professor:
+            professor = self.env.user.professor_ids[0]
+            for record in self:
+                if professor and record.id in professor.course_ids.ids:
+                    record.is_user_professor =  True
+                else:
+                    record.is_user_professor =  False
+        else:
+            for record in self:
+                record.is_user_professor =  False
+
+    def _search_is_user_professor(self, operator, value):
+        courses = self.env['faculty.course'].search([('professor_ids', '!=', False)])
+        list_courses=[]
+        for rec in courses:
+            if rec.is_user_professor:
+                list_courses.append(rec.id)
+        return [('id','in', list_courses)]
+    
+    """
+    newly_hired_employee = fields.Boolean('Newly hired employee', compute='_compute_newly_hired_employee',
+                                          search='_search_newly_hired_employee')
+
+    @api.multi
+    def _compute_newly_hired_employee(self):
+        read_group_result = self.env['hr.applicant'].read_group(
+            [('emp_id', 'in', self.ids), ('job_id.state', '=', 'recruit')],
+            ['emp_id'], ['emp_id'])
+        result = dict((data['emp_id'], data['emp_id_count'] > 0) for data in read_group_result)
+        for record in self:
+            record.newly_hired_employee = result.get(record.id, False)
+
+    def _search_newly_hired_employee(self, operator, value):
+        applicants = self.env['hr.applicant'].search([('job_id.state', '=', 'recruit')])
+        return [('id', 'in', applicants.ids)]
+    """
 
 class Student(models.Model):
     _name = 'faculty.student'
     _description = 'Allows to manage the students information'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     name = fields.Char(string='Nombre', required=True)
-    user_id = fields.Many2one('res.users', string='Usuario', required= True)
+    user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('student_ids','=',False)]")
     
     qty_credits = fields.Integer(string='Creditos', required=True)
     
