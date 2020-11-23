@@ -220,6 +220,37 @@ class Student(models.Model):
             'target': 'new',
         }
         return action
+
+    professor_ids = fields.Many2many(comodel_name='faculty.professor',
+                                  delete="cascade",
+                                  compute="_compute_professor_ids")
+    @api.one
+    def _compute_professor_ids(self):
+        #self.env.cr.execute
+
+        self._cr.execute("""
+                SELECT professor.id, professor.name, student.name, course.name 
+                from faculty_student student 
+                JOIN faculty_course_faculty_student_rel cs
+                ON (student.id=cs.faculty_student_id)
+                JOIN faculty_course course
+                    ON (cs.faculty_course_id = course.id) 
+                JOIN faculty_course_faculty_professor_rel cp
+                ON (cp.faculty_course_id=course.id)  
+                JOIN faculty_professor professor 
+                    ON (professor.id = cp. faculty_professor_id) 
+                where student.id={};
+            """.format(self.id))
+        res = self._cr.fetchall()
+        professor_list=[]
+        if res:
+            for professor in res:
+                print("{} con id es {}".format(professor[1],professor[0]))
+                professor_list.append(int(professor[0]))
+                
+            self.professor_ids=self.env['faculty.professor'].sudo().browse(professor_list) 
+    
+
     
 
 """

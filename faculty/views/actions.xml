@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="students_action" model="ir.actions.act_window">
+    <!--record id="students_action" model="ir.actions.act_window">
         <field name="name">Estudiantes</field>
         <field name="res_model">faculty.student</field>
         <field name="view_type">form</field>
@@ -10,7 +10,7 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No hay estudiantes</p>
         </field>
-    </record>
+    </record-->
 
     <record id="courses_action" model="ir.actions.act_window">
         <field name="name">Cursos</field>
@@ -24,7 +24,7 @@
         </field>
     </record>
 
-    <record id="professors_action" model="ir.actions.act_window">
+    <!--record id="professors_action" model="ir.actions.act_window">
         <field name="name">Profesores</field>
         <field name="res_model">faculty.professor</field>
         <field name="view_type">form</field>
@@ -34,7 +34,56 @@
         <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">No hay profesores</p>      
         </field>
-    </record>
-    
+    </record-->
+<record id="students_action" model="ir.actions.server">
+    <field name="name">Mis estudiantes </field>
+    <field name="model_id" ref="model_faculty_student"/>
+    <field name="binding_model_id" ref="faculty.model_faculty_student"/>
+    <field name="state">code</field>
+    <field name="code">
+if user.professor_ids:
+    professor = user.professor_ids[0]
+    name = "Mis estudiantes"
+    student_list = professor.student_ids.ids
+    domain = [('id','in',student_list)]
+else:
+    domain=[]
+    name="Lista de estudiantes"
 
+action = {
+    "name": name,
+    "type": "ir.actions.act_window",
+    "view_type": "form",
+    "views": [[False,'tree'],[False,'form']],
+    "res_model": model._name,
+    "domain": domain
+}
+    </field>
+  </record>
+
+<record id="professors_action" model="ir.actions.server">
+    <field name="name">Mis profesores </field>
+    <field name="model_id" ref="model_faculty_professor"/>
+    <field name="binding_model_id" ref="faculty.model_faculty_professor"/>
+    <field name="state">code</field>
+    <field name="code">
+if user.student_ids:
+    student = user.student_ids[0]
+    name = "Mis profesores"
+    professor_list = student.professor_ids.ids
+    domain = [('id','in',professor_list)]
+else:
+    domain=[]
+    name="Lista de profesores"
+
+action = {
+    "name": name,
+    "type": "ir.actions.act_window",
+    "view_type": "form",
+    "views": [[False,'tree'],[False,'form']],
+    "res_model": model._name,
+    "domain": domain
+}
+    </field>
+  </record>
 </odoo>

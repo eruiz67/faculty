@@ -95,4 +95,34 @@ class Professor(models.Model):
         tools.image_resize_images(vals)
         professor = super(Professor, self).write(vals)
         return professor
+
+    
+    student_ids = fields.Many2many(comodel_name='faculty.student',
+                                  delete="cascade",
+                                  compute="_compute_student_ids")
+    @api.one
+    def _compute_student_ids(self):
+        #self.env.cr.execute
+
+        self._cr.execute("""
+                SELECT student.id, student.name, professor.name, course.name 
+                from faculty_student student 
+                JOIN faculty_course_faculty_student_rel cs
+                ON (student.id=cs.faculty_student_id)
+                JOIN faculty_course course
+                    ON (cs.faculty_course_id = course.id) 
+                JOIN faculty_course_faculty_professor_rel cp
+                ON (cp.faculty_course_id=course.id)  
+                JOIN faculty_professor professor 
+                    ON (professor.id = cp. faculty_professor_id) 
+                where professor.id={};
+            """.format(self.id))
+        res = self._cr.fetchall()
+        student_list=[]
+        if res:
+            for student in res:
+                print("{} con id es {}".format(student[1],student[0]))
+                student_list.append(int(student[0]))
+                
+            self.student_ids=self.env['faculty.student'].sudo().browse(student_list) 
     
