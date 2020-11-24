@@ -16,11 +16,12 @@
           <group>
             <group>
               <field name="name" string="Nombre"/>
-              <field name="description" string="Concepto"/>
-              <field name="course_id" />
+              <field name="description"/>
+              <field name="course_id"/>
             </group>
             <group>
               <field name="datas" filename="datas_fname"/>
+              <field name="date_published"  states="published" />
               <field name="datas_fname" invisible="1"/>
               <field name="mimetype" invisible="1" groups="base.group_no_one"/>
             </group>

@@ -5,6 +5,7 @@ import re
 from odoo.exceptions import ValidationError
 from lxml import etree
 from odoo.tools.misc import DEFAULT_SERVER_DATE_FORMAT
+import logging
 
 
 class Exam(models.Model):
@@ -25,7 +26,16 @@ class Exam(models.Model):
 
     @api.multi
     def action_program(self):
-        self.state = 'waiting'
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'Programar',
+            'res_model': 'faculty.program_course_wizard',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'context':{'exam_id':self.id},
+            'target': 'new',
+        }
+        return action
 
 
     @api.multi
@@ -39,6 +49,22 @@ class Exam(models.Model):
         self.ensure_one()
         self.state = 'cancelled'
         #self.write({'state': 'solicitado'})
+    
+    @api.multi
+    def action_publish_cron(self):
+        _logger = logging.getLogger(__name__)
+        _logger.info("************ INICIANDO TAREA DE PUBLICACION DE EXAMENES ****************************")
+        print("--------------------- INICIANDO TAREA DE PUBLICACION DE EXAMENES")
+        exams = self.env['faculty.exam'].search([])
+        for rec in exams:
+            if rec.state =='waiting' and fields.datetime.now() >=fields.Datetime.now():
+                rec.state = 'published'
+                _logger.info("Se ha publicado el examen {} con id {}".format(rec.name, rec.id))
+                print("Se ha publicado el examen {} con id {}".format(rec.name, rec.id))
+        _logger.info("***********TAREA TERMINADA**********")
+        print("-------- tarea terminada-------")
+        return True
+
 
     """
     is_published = fields.Char(compute='_compute_is_published', string='Esta publicado')

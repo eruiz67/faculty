@@ -31,9 +31,11 @@
         'views/course_views.xml',
         'views/professor_views.xml',
         'views/exam_views.xml',
+        'wizards/program_course_wizard.xml',
         'wizards/enroll_wizard.xml',
         'views/actions.xml',
         'views/menus.xml',
+        'data/cron.xml',
         'views/templates.xml'
     ],
     # only loaded in demonstration mode
