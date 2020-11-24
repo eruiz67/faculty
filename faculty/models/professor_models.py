@@ -12,7 +12,7 @@ class Professor(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Nombre', required=True)
-    user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('professor_ids','=',False)]")
+    user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('professor_ids','=',False),('is_faculty_professor','=',True)]")
         
     identification = fields.Char(string='Carnet de Identidad', required =True, copy=False)
     _sql_constraints = [

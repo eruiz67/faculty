@@ -3,12 +3,14 @@
     <menuitem
         id="faculty_root_menu"
         name="Facultad"
+                groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
         sequence="10"/>
 
     <menuitem
         id="student_menu"
         name="Estudiantes"
         action="students_action"
+        groups="group_faculty_professor,group_faculty_admin"
         parent="faculty_root_menu"
         sequence="20"/>
 
@@ -16,6 +18,7 @@
         id="courses_menu"
         name="Cursos"
         action="courses_action"
+        groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
         parent="faculty_root_menu"
         sequence="30"/>
 
@@ -24,6 +27,8 @@
         name="Profesores"
         action="professors_action"
         parent="faculty_root_menu"
+        groups="group_faculty_admin,group_faculty_student"
         sequence="40"/>
+
 
 </odoo>

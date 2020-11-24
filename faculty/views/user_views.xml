@@ -25,6 +25,7 @@
 
                 <button name="action_enroll" type="object"
                         string="Matricular" class="btn btn-success"
+                        groups="faculty.group_faculty_admin"
                         attrs="{'invisible': [('id','=',False)]}"
                         />
 

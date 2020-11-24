@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+<record id="course_view_search" model="ir.ui.view">
+    <field name="name">faculty.course.view.search</field>
+    <field name="model">faculty.course</field>
+    <field name="arch" type="xml">
+        <search string="">
+            <field name="name" />
+            <field name="description" />
+            <filter string="Mis cursos" name="mine" domain="[('is_my_course','=',True)]"/>
+        </search>
+    </field>
+</record>
+
+<record id="course_view_tree" model="ir.ui.view">
+    <field name="name">faculty.course.view.tree</field>
+    <field name="model">faculty.course</field>
+    <field name="arch" type="xml">
+        <tree string="">
+            <field name="name" />
+            <field name="credits_required" />
+        </tree>
+    </field>
+</record>
+
 <record id="course_view_form" model="ir.ui.view">
     <field name="name">faculty.course.view.form</field>
     <field name="model">faculty.course</field>
@@ -10,10 +33,12 @@
             <header>
                 <button name="action_enroll" type="object"
                         string="Matricular" class="btn btn-success"
+                        groups="faculty.group_faculty_student"
                         attrs="{'invisible': ['|',('id','=',False),('is_user_enrolled','=',True)]}"
                         />
                 <button name="action_quit" type="object"
                         string="Dejar curso" class="btn btn-danger"
+                        groups="faculty.group_faculty_student"
                         attrs="{'invisible': ['|',('id','=',False),('is_user_enrolled','=',False)]}"
                         confirm="Está usted a punto de dejar el curso, sus créditos no les serán devueltos ¿Seguro que desea dejar el curso?"
                         />
@@ -77,28 +102,6 @@
     </field>
 </record>
 
-<record id="course_view_tree" model="ir.ui.view">
-    <field name="name">faculty.course.view.tree</field>
-    <field name="model">faculty.course</field>
-    <field name="arch" type="xml">
-        <form string="">
-            <sheet>
-                <field name="name" />
-                <field name="description" />
-            </sheet>
-        </form>
-    </field>
-</record>
-<record id="course_view_search_professor" model="ir.ui.view">
-    <field name="name">model.name.view.search</field>
-    <field name="model">faculty.course</field>
-    <field name="arch" type="xml">
-        <search string="">
-            <field name="name" />
-            <field name="description" />
-            <filter string="Mis cursos" name="mine" domain="[('is_user_professor','=',True)]"/>
-        </search>
-    </field>
-</record>
+
 
 </odoo>

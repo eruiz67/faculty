@@ -40,9 +40,10 @@ class Course(models.Model):
                 vals['qty_credits'] = student.qty_credits - self.credits_required
                 vals['course_ids'] = [(4, self.id)]
             if vals:
-                student.write(vals)
-                message="Se ha matriculado en el curso {}".format(self.name)
-                student.message_post(body=message, subtype="mail.mt_note")
+                student.sudo().write(vals)
+                print("Se ha matriculado en el curso")
+                #message="Se ha matriculado en el curso {}".format(self.name)
+                #student.message_post(body=message, subtype="mail.mt_note")
             else:
                 raise ValidationError("No cuenta con suficientes c'reditos para matricular en este curso")
             return True
@@ -57,7 +58,7 @@ class Course(models.Model):
                 raise ValidationError("Usted no se encuentra matriculado en este curso")
             else:
                 vals['course_ids'] = [(3, self.id)]
-                student.write(vals)
+                student.sudo().write(vals)
                 message="Ha canselado la matricula del curso {}".format(self.name)
                 student.message_post(body=message, subtype="mail.mt_note")
 
@@ -76,7 +77,7 @@ class Course(models.Model):
             for record in self:
                 record.is_user_enrolled =  False
 
-    is_user_professor = fields.Boolean(compute='_compute_is_user_professor', search='_search_is_user_professor', string='Eres profesor?')
+    is_user_professor = fields.Boolean(compute='_compute_is_user_professor', string='Eres profesor?')
     
 
     def _compute_is_user_professor(self):
@@ -92,11 +93,36 @@ class Course(models.Model):
             for record in self:
                 record.is_user_professor =  False
 
-    def _search_is_user_professor(self, operator, value):
-        courses = self.env['faculty.course'].search([('professor_ids', '!=', False)])
+    
+
+    is_my_course = fields.Boolean(compute='_compute_is_my_course', search='_search_is_my_course',string='Es mi curso?')
+    
+    def _compute_is_my_course(self):
+        is_professor = self.env.user.professor_ids
+        is_student = self.env.user.student_ids
+        if is_professor:
+            professor = self.env.user.professor_ids[0]
+            for record in self:
+                if professor and record.id in professor.course_ids.ids:
+                    record.is_my_course =  True
+                else:
+                    record.is_my_course =  False
+        elif is_student:
+            student = self.env.user.student_ids[0]
+            for record in self:
+                if student and record.id in student.course_ids.ids:
+                    record.is_my_course =  True
+                else:
+                    record.is_my_course =  False
+        else:
+            for record in self:
+                record.is_my_course =  False
+
+    def _search_is_my_course(self, operator, value):
+        courses = self.env['faculty.course'].search([])
         list_courses=[]
         for rec in courses:
-            if rec.is_user_professor:
+            if rec.is_my_course:
                 list_courses.append(rec.id)
         return [('id','in', list_courses)]
     
@@ -123,7 +149,7 @@ class Student(models.Model):
     _description = 'Allows to manage the students information'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     name = fields.Char(string='Nombre', required=True)
-    user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('student_ids','=',False)]")
+    user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('student_ids','=',False),('is_faculty_student','=',True)]")
     
     qty_credits = fields.Integer(string='Creditos', required=True)
     
