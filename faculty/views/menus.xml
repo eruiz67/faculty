@@ -30,5 +30,13 @@
         groups="group_faculty_admin,group_faculty_student"
         sequence="40"/>
 
+    <menuitem
+        id="exam_menu"
+        name="Exámenes"
+        action="exam_action"
+        groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
+        parent="faculty_root_menu"
+        sequence="50"/>
+
 
 </odoo>

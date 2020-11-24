@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="exam_view_form" model="ir.ui.view">
+    <field name="name">faculty.exam.view.form</field>
+    <field name="model">faculty.exam</field>
+    <field name="arch" type="xml">
+      <form >
+        <header>
+            <button name="action_program" type="object" string="Programar" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
+            <button name="action_publish" type="object" string="Publicar ahora" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
+            <button name="action_cancel" type="object" string="Cancelar" class="btn btn-danger" attrs="{'invisible': ['|',('id','=',False),('state','=','cancelled')]}" groups="faculty.group_faculty_professor" confirm="¿Seguro de que desea cancelar el exámen? Esta operación no podrá ser revertida"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,published,cancelled" statusbar_colors='{"cancelled":"red"}'/>
+          </header>
+        <sheet>
+          <group>
+            <group>
+              <field name="name" string="Nombre"/>
+              <field name="description" string="Concepto"/>
+              <field name="course_id" />
+            </group>
+            <group>
+              <field name="datas" filename="datas_fname"/>
+              <field name="datas_fname" invisible="1"/>
+              <field name="mimetype" invisible="1" groups="base.group_no_one"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+</odoo>
