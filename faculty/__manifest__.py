@@ -32,6 +32,8 @@
         'views/professor_views.xml',
         'views/exam_views.xml',
         'wizards/program_course_wizard.xml',
+        'wizards/response_exam_wizard.xml',
+        'wizards/qualify_exam_wizard.xml',
         'wizards/enroll_wizard.xml',
         'views/actions.xml',
         'views/menus.xml',

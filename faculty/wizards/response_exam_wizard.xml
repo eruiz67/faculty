@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="response_exam_wizard_view_form" model="ir.ui.view">
+        <field name="name">faculty.response_exam_wizard.view.form</field>
+        <field name="model">faculty.response_exam_wizard</field>
+        <field name="arch" type="xml">
+        <form>
+            <group>
+              <group>
+                <field name="response_description" />
+              </group>
+              <group>
+                <field name="file_response" filename="filename" string="Archivo"/>
+                <field name="filename" invisible="1"/>
+              </group>
+            </group>
+            <footer>
+                <button type="object" name="action_response_exam"
+                    string="Enviar respuesta" class="oe_highlight" confirm="¿Seguro de que desea enviar la rspuesta? Una vez enviada la respuesta no podra ser cambiada"/>
+                <button special="cancel" string="Cancelar"/>
+            </footer>
+        </form>
+        </field>
+    </record>
+
+</odoo>

@@ -10,12 +10,12 @@ import logging
 
 class Exam(models.Model):
     _name = 'faculty.exam'
-    _inherits = {'ir.attachment': 'attachment_id'}
     _description = 'Allows professor to create exams'
 
-    
+    name = fields.Char(string='Nombre')
     description = fields.Char(string='Descripcion')
-    datas = fields.Binary(string='Archivo',required=True)
+    file_exam = fields.Binary(string='Adjunto',required=True)
+    filename_exam =  fields.Char(string='')
     date_published  =  fields.Datetime(string='Fecha de publicacion')
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -65,6 +65,27 @@ class Exam(models.Model):
         print("-------- tarea terminada-------")
         return True
 
+    response_ids = fields.One2many('faculty.response', 'exam_id', string='Respuestas')
+
+    @api.multi
+    def action_response_exam(self):
+        context= dict(self.env.context)
+        #context['form_view_initial_mode']='edit'
+        context['exam_id']= self.id
+        context['student_id'] = self.env.user.student_id_computed.id
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'Enviar respuesta',
+            'res_model': 'faculty.response_exam_wizard',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'context':context,
+            'target': 'new',
+        }
+        return action
+
+
 
     """
     is_published = fields.Char(compute='_compute_is_published', string='Esta publicado')
@@ -93,11 +114,30 @@ class Response(models.Model):
 class Response(models.Model):
     _name = 'faculty.response'
     _description = 'Allows student to submit responses'
-    _inherits = {'ir.attachment': 'attachment_id'}
 
-    datas = fields.Binary(string='Archivo',required=True)
+    state = field_name = fields.Selection([
+        ('submitted', 'Enviada'),
+        ('qualified','Calificada')
+    ], string='Estado', default="submitted")
+
+    file_response = fields.Binary(string='Adjunto',required=True)
+    filename = fields.Char()
     exam_id = fields.Many2one('faculty.exam', string='Examen')
     student_id = fields.Many2one('faculty.student', string='Estudiante')
-
     response_description = fields.Text(string='Descripcion')
     mark = fields.Float(string='Nota', digits=(5,2))
+    comments = fields.Text(string='Comentarios')
+
+    @api.multi
+    def action_qualify_exam(self):
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'Enviar respuesta',
+            'res_model': 'faculty.qualify_exam_wizard',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'context':{'response_id':self.id},
+            'target': 'new',
+        }
+        return action

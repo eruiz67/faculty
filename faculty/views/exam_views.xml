@@ -10,6 +10,7 @@
             <button name="action_program" type="object" string="Programar" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
             <button name="action_publish" type="object" string="Publicar ahora" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
             <button name="action_cancel" type="object" string="Cancelar" class="btn btn-danger" attrs="{'invisible': ['|',('id','=',False),('state','=','cancelled')]}" groups="faculty.group_faculty_professor" confirm="¿Seguro de que desea cancelar el exámen? Esta operación no podrá ser revertida"/>
+            <button name="action_response_exam" type="object" string="Enviar respuesta" class="oe_highlight" groups="faculty.group_faculty_student" />
             <field name="state" widget="statusbar" statusbar_visible="draft,published,cancelled" statusbar_colors='{"cancelled":"red"}'/>
           </header>
         <sheet>
@@ -20,15 +21,65 @@
               <field name="course_id"/>
             </group>
             <group>
-              <field name="datas" filename="datas_fname"/>
+              <field name="file_exam" filename="filename_exam"/>
               <field name="date_published"  states="published" />
-              <field name="datas_fname" invisible="1"/>
-              <field name="mimetype" invisible="1" groups="base.group_no_one"/>
+              <field name="filename_exam" invisible="1"/>
             </group>
           </group>
+          <notebook>
+            <page name="responses" string="Respuestas">
+              <field name="response_ids" readonly="1" >
+                <tree>
+                  <field name="student_id" />
+                  <field name="response_description" />
+                </tree>
+              </field>
+              
+            </page>
+          </notebook>
         </sheet>
       </form>
     </field>
   </record>
+
+     <record id="exam_response_form" model="ir.ui.view">
+         <field name="name">faculty.response.view.form</field>
+         <field name="model">faculty.response</field>
+         <field name="arch" type="xml">
+            <form string="Enviar respuesta">
+        <header>
+            <button name="action_qualify_exam" type="object" string="Calificar" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['submitted'])]}" groups="faculty.group_faculty_professor"/>
+            <field name="state" widget="statusbar" />
+          </header>
+        <sheet>
+            <group>
+              <group>
+                <field name="response_description" />
+                <field name="mark" />
+              </group>
+              <group>
+                <field name="file_response" filename="filename" string="Archivo"/>
+                <field name="filename" invisible="1"/>
+                <field name="exam_id" />
+                <field name="student_id" />
+              </group>
+            </group>
+            </sheet>
+            </form>
+         </field>
+     </record>
+
+     <record id="faculty_response_view_form" model="ir.ui.view">
+       <field name="name">faculty.response.view.form</field>
+       <field name="model">faculty.response</field>
+       <field name="arch" type="xml">
+         <tree string="">
+            <field name="exam_id" />
+            <field name="student_id" />
+            <field name="response_description" />
+            <field name="state" />
+         </tree>
+       </field>
+     </record>
 
 </odoo>

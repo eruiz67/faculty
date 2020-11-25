@@ -37,6 +37,13 @@
         groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
         parent="faculty_root_menu"
         sequence="50"/>
+    <menuitem
+        id="response_menu"
+        name="Respuestas"
+        action="response_action"
+        groups="group_faculty_professor,group_faculty_admin"
+        parent="faculty_root_menu"
+        sequence="50"/>
 
 
 </odoo>

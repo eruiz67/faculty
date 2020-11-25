@@ -13,6 +13,14 @@ class ResUsersStudent(models.Model):
     student_ids = fields.One2many('faculty.student', 'user_id', string='Estudiante')
     professor_ids = fields.One2many('faculty.professor', 'user_id', string='Profesor')
 
+    student_id_computed = fields.Many2one(comodel_name='faculty.student',compute='_compute_student_id_computed', string='Estudiante')
+    
+
+    @api.depends('student_ids')
+    def _compute_student_id_computed(self):
+        for rec in self:
+            if rec.student_ids:
+                rec.student_id_computed = self.env['faculty.student'].browse(rec.student_ids[0].id)
 
     is_faculty_student = fields.Boolean(compute='_compute_is_faculty_student', search="_search_is_faculty_student", string='Es estudiante?')
     

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="qualify_exam_wizard_view_form" model="ir.ui.view">
+        <field name="name">faculty.qualify_exam_wizard.view.form</field>
+        <field name="model">faculty.qualify_exam_wizard</field>
+        <field name="arch" type="xml">
+        <form>
+            <group>
+              <group>
+                <field name="mark" />
+              </group>
+              <group>
+                <field name="comments" />
+              </group>
+            </group>
+            <footer>
+                <button type="object" name="action_qualify_exam"
+                    string="Calificar" class="oe_highlight"/>
+                <button special="cancel" string="Cancelar"/>
+            </footer>
+        </form>
+        </field>
+    </record>
+    
+
+</odoo>
