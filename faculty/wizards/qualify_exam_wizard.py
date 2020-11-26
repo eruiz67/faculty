@@ -21,4 +21,4 @@ class QualifyExamWizard(models.TransientModel):
         vals['mark'] = self.mark
         vals['comments'] = self.comments
         vals['state'] = 'qualified'
-        exam.write(vals)
+        exam.sudo().write(vals)

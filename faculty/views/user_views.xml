@@ -27,6 +27,11 @@
                         string="Matricular" class="btn btn-success"
                         groups="faculty.group_faculty_admin"
                         attrs="{'invisible': [('id','=',False)]}"
+                        />  
+                <button name="action_qualify_student" type="object"
+                        string="Evaluar" class="btn btn-success"
+                        groups="faculty.group_faculty_professor"
+                        attrs="{'invisible': [('id','=',False)]}"
                         />
 
             </header>
@@ -67,6 +72,15 @@
                             <tree>
                                 <field name="name" />
                                 <field name="description" />
+                               
+                            </tree>
+                            </field>
+                        </page>
+                        <page name="marks" string="Notas">
+                            <field name="course_student_mark_ids" readonly="1" >
+                            <tree>
+                                <field name="course_id" />
+                                <field name="mark" />
                             </tree>
                             </field>
                         </page>

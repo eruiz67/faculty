@@ -127,6 +127,18 @@ class Course(models.Model):
         return [('id','in', list_courses)]
     
     exam_ids = fields.One2many('faculty.exam', 'course_id', string='Examenes')
+    course_student_mark_ids =  fields.One2many('faculty.course_student_mark', 'course_id', string='Notas')
+
+    course_student_mark = fields.Float(compute='_compute_course_student_mark', string='Nota',  digits=(5, 2))
+
+
+    def _compute_course_student_mark(self):
+        for rec in self:
+            if self.env.user.student_ids and self.env.user.student_ids[0] :
+                qualified = self.env['course_student_mark'].search([('course_id','=',rec.id ),('student_id','=', self.env.user.student_ids[0].id)],limit=1)
+                if qualified:
+                    rec.course_student_mark = qualified.mark
+
 
 class Student(models.Model):
     _name = 'faculty.student'
@@ -173,6 +185,8 @@ class Student(models.Model):
             base64.b64encode(image))
 
     course_ids = fields.Many2many('faculty.course', string='Cursos')
+    course_student_mark_ids =  fields.One2many('faculty.course_student_mark', 'student_id', string='Notas')
+
 
     age = fields.Integer(compute='_compute_age', string='Edad', store=True)
     
@@ -261,6 +275,19 @@ class Student(models.Model):
             self.professor_ids=self.env['faculty.professor'].sudo().browse(professor_list) 
     
 
+    @api.multi
+    def action_qualify_student(self):
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'Enviar respuesta',
+            'res_model': 'faculty.course_global_score_wizard',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'context':{'student_id':self.id},
+            'target': 'new',
+        }
+        return action
     
 
 """
@@ -304,4 +331,14 @@ class Course(models.Model):
     student_ids =  fields.Many2many('res.users', string='Estudiantes')
         
 """
+
+class CourseStudentMark(models.Model):
+    _name = 'faculty.course_student_mark'
+    _description = 'Allows to set a global score for a couse to a student'
+
+    course_id = fields.Many2one('faculty.course', string='Curso')
+    student_id = fields.Many2one('faculty.student', string='Estudiante')
+
+    mark = fields.Float(string='Nota global', digits=(5,2))
+
     
