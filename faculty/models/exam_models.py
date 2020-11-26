@@ -24,6 +24,8 @@ class Exam(models.Model):
         ('cancelled','Cancelado')
     ], string='Estado',default="draft")
 
+    
+    
     @api.multi
     def action_program(self):
         action = {
@@ -86,30 +88,29 @@ class Exam(models.Model):
         return action
 
 
-
-    """
-    is_published = fields.Char(compute='_compute_is_published', string='Esta publicado')
-    
-    @api.depends('date_published')
-    def _compute_is_published(self):
-        pass
-    """
-
     course_id = fields.Many2one('faculty.course', string='Curso', domain="[('is_my_course','=',True)]", help="Curso al que pertenece el examen. Un profesor solamente podra crear examenes para los cursos que imparte")
 
-"""
-class Response(models.Model):
-    _name = 'faculty.response'
-    _description = 'Allows student to submit responses'
+    is_user_response = fields.Boolean(compute='_compute_is_user_response', string='Ha respondido el usuario')
 
+    state_response = fields.Selection([
+        ('waiting', 'Esperando respuesta'),
+        ('done', 'Respondido')
+    ], string='Estado', compute='_compute_is_user_response')
 
-    exam_is = fields.Many2one('faculty.exam', string='Examen')
-    student_id = fields.Many2one('faculty.student', string='Estudiante')
-    response_file = fields.Binary(string='Respuesta')
-    exam_filename = fields.Char()
-    response_description = fields.Text(string='Descripcion')
-    mark = fields.Float(string='Nota', digits=(5,2))
-"""
+    @api.depends('response_ids')
+    def _compute_is_user_response(self):
+        for rec in self:
+            resp = False
+            if rec.response_ids and self.env.user.student_id_computed:
+                for response in rec.response_ids:
+                    if response.student_id.id == self.env.user.student_id_computed.id:
+                        resp = True
+            rec.is_user_response = resp
+            if resp:
+                rec.state_response = 'done'
+            else:
+                rec.state_response = 'waiting'
+
 
 class Response(models.Model):
     _name = 'faculty.response'
@@ -141,3 +142,4 @@ class Response(models.Model):
             'target': 'new',
         }
         return action
+

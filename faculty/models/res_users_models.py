@@ -22,6 +22,17 @@ class ResUsersStudent(models.Model):
             if rec.student_ids:
                 rec.student_id_computed = self.env['faculty.student'].browse(rec.student_ids[0].id)
 
+    professor_id_computed = fields.Many2one(comodel_name='faculty.professor',compute='_compute_professor_id_computed', string='Profesor')
+    
+
+    @api.depends('professor_ids')
+    def _compute_professor_id_computed(self):
+        for rec in self:
+            if rec.professor_ids:
+                rec.professor_id_computed = self.env['faculty.professor'].browse(rec.professor_ids[0].id)
+
+
+
     is_faculty_student = fields.Boolean(compute='_compute_is_faculty_student', search="_search_is_faculty_student", string='Es estudiante?')
     
     def _compute_is_faculty_student(self):

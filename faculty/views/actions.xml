@@ -85,7 +85,7 @@ action = {
     </field>
   </record>
 
-  <record id="exam_action" model="ir.actions.act_window">
+  <!--record id="exam_action" model="ir.actions.act_window">
       <field name="name">Examenes</field>
       <field name="res_model">faculty.exam</field>
       <field name="view_type">form</field>
@@ -95,9 +95,9 @@ action = {
       <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">No hay profesores</p>  
       </field>
-  </record>
+  </record-->
 
-  <record id="response_action" model="ir.actions.act_window">
+  <!--record id="response_action" model="ir.actions.act_window">
       <field name="name">Respuestas</field>
       <field name="res_model">faculty.response</field>
       <field name="view_type">form</field>
@@ -107,9 +107,88 @@ action = {
       <field name="help" type="html">
            <p class="o_view_nocontent_smiling_face">No hay respuestas</p>  
       </field>
+  </record-->
+
+
+
+  <record id="exam_action" model="ir.actions.server">
+    <field name="name">Exams server action</field>
+    <field name="model_id" ref="model_faculty_exam"/>
+    <field name="binding_model_id" ref="faculty.model_faculty_exam"/>
+    <field name="state">code</field>
+    <field name="code"> 
+view_list=  [[False,'tree'],[False,'form']]  
+if user.student_ids:
+    name = "Mis Exámenes"
+    list_exam=[]
+    #view_list = [[ref('faculty.faculty_exam_student_view_tree'),'tree'],[False,'form']]
+    for course in user.student_ids[0].course_ids:
+        for exam in course.exam_ids:
+            if exam.state in ['published']:
+                list_exam.append(exam.id)
+    domain = [('id','in',list_exam)]
+elif user.professor_ids:
+    list_exam=[]
+    #view_list=  [[False,'tree'],[False,'form']]
+    name = "Exámenes de mis estudiantes"
+    for course in user.professor_ids[0].course_ids:
+        for exam in course.exam_ids:
+            list_exam.append(exam.id)
+    domain = [('id','in',list_exam)]
+else:
+     name = "Todos los examenes"
+     domain=[]
+     #view_list=  [[False,'tree'],[False,'form']]
+
+action = {
+    "name": name,
+    "type": "ir.actions.act_window",
+    "view_type": "form",
+    "views":view_list,
+    "res_model": model._name,
+    "domain": domain
+}
+    </field>
   </record>
 
+  <record id="response_action" model="ir.actions.server">
+    <field name="name">Response server action</field>
+    <field name="model_id" ref="model_faculty_response"/>
+    <field name="binding_model_id" ref="faculty.model_faculty_response"/>
+    <field name="state">code</field>
+    <field name="code"> 
+view_list=  [[False,'tree'],[False,'form']]  
+if user.student_ids:
+    name = "Mis respuestas"
+    list_response=[]
+    #view_list = [[ref('faculty.faculty_exam_student_view_tree'),'tree'],[False,'form']]
+    for course in user.student_ids[0].course_ids:
+        for exam in course.exam_ids:
+            for response in exam.response_ids:
+                list_response.append(response.id)
+    domain = [('id','in',list_response)]
+elif user.professor_ids:
+    list_response=[]
+    #view_list=  [[False,'tree'],[False,'form']]
+    name = "Respuestas de mis estudiantes"
+    for course in user.professor_ids[0].course_ids:
+        for exam in course.exam_ids:
+            for response in exam.response_ids:
+                list_response.append(response.id)
+    domain = [('id','in',list_response)]
+else:
+     name = "Todas las respuestas"
+     domain=[]
+     #view_list=  [[False,'tree'],[False,'form']]
 
-
-
+action = {
+    "name": name,
+    "type": "ir.actions.act_window",
+    "view_type": "form",
+    "views":view_list,
+    "res_model": model._name,
+    "domain": domain
+}
+    </field>
+  </record>
 </odoo>

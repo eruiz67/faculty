@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+<record id="faculty_exam_student_view_tree" model="ir.ui.view">
+  <field name="name">faculty.exam_student.view.tree</field>
+  <field name="model">faculty.exam</field>
+  <field name="priority">50</field>
+  <field name="arch" type="xml">
+      <tree>
+          <field name="name" />
+          <field name="course_id"/>
+      </tree>
+  </field>
+</record>
+
+<record id="faculty_exam_professor_view_tree" model="ir.ui.view">
+  <field name="name">faculty.exam_professor.view.tree</field>
+  <field name="model">faculty.exam</field>
+  <field name="priority">10</field>
+  <field name="arch" type="xml">
+      <tree>
+          <field name="name" />
+          <field name="course_id"/>
+          <field name="state" groups="faculty.group_faculty_professor" />
+          <field name="state_response" groups="faculty.group_faculty_student" />
+
+      </tree>
+  </field>
+</record>
+
 <record id="exam_view_form" model="ir.ui.view">
     <field name="name">faculty.exam.view.form</field>
     <field name="model">faculty.exam</field>
@@ -10,8 +37,9 @@
             <button name="action_program" type="object" string="Programar" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
             <button name="action_publish" type="object" string="Publicar ahora" class="btn btn-success" attrs="{'invisible': ['|',('id','=',False),('state','not in',['draft','waiting'])]}" groups="faculty.group_faculty_professor"/>
             <button name="action_cancel" type="object" string="Cancelar" class="btn btn-danger" attrs="{'invisible': ['|',('id','=',False),('state','=','cancelled')]}" groups="faculty.group_faculty_professor" confirm="¿Seguro de que desea cancelar el exámen? Esta operación no podrá ser revertida"/>
-            <button name="action_response_exam" type="object" string="Enviar respuesta" class="oe_highlight" groups="faculty.group_faculty_student" />
-            <field name="state" widget="statusbar" statusbar_visible="draft,published,cancelled" statusbar_colors='{"cancelled":"red"}'/>
+            <button name="action_response_exam" type="object" string="Enviar respuesta" class="oe_highlight" groups="faculty.group_faculty_student" attrs="{'invisible': ['|',('id','=',False),('state_response','=','done')]}" />
+            <field name="state" widget="statusbar" statusbar_visible="draft,published,cancelled" statusbar_colors='{"cancelled":"red"}' groups="faculty.group_faculty_professor"/>
+            <field name="state_response" widget="statusbar"  groups="faculty.group_faculty_student" string="Estado"  />
           </header>
         <sheet>
           <group>
