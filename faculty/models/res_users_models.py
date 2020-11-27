@@ -37,14 +37,14 @@ class ResUsersStudent(models.Model):
     
     def _compute_is_faculty_student(self):
         for rec in self:
-            rec.is_faculty_student = rec.has_group("faculty.group_faculty_student")
+            rec.is_faculty_student = rec.has_group("faculty.group_faculty_student") and not rec.has_group("faculty.group_faculty_professor") and not rec.has_group("faculty.group_faculty_admin")
     
     
     def _search_is_faculty_student(self, operator, value):
         users = self.env['res.users'].sudo().search([])
         list_users=[]
         for rec in users:
-            if rec.has_group("faculty.group_faculty_student"):
+            if rec.has_group("faculty.group_faculty_student") and not rec.has_group("faculty.group_faculty_professor") and not rec.has_group("faculty.group_faculty_admin"):
                 list_users.append(rec.id)
         return [('id','in', list_users)]
 
@@ -52,13 +52,13 @@ class ResUsersStudent(models.Model):
     
     def _compute_is_faculty_professor(self):
         for rec in self:
-            rec.is_faculty_professor = rec.has_group("faculty.group_faculty_professor")
+            rec.is_faculty_professor = rec.has_group("faculty.group_faculty_professor") and not rec.has_group("faculty.group_faculty_student") and not rec.has_group("faculty.group_faculty_admin")
     
     
     def _search_is_faculty_professor(self, operator, value):
         users = self.env['res.users'].sudo().search([])
         list_users=[]
         for rec in users:
-            if rec.has_group("faculty.group_faculty_professor"):
+            if rec.has_group("faculty.group_faculty_professor") and not rec.has_group("faculty.group_faculty_student") and not rec.has_group("faculty.group_faculty_admin"):
                 list_users.append(rec.id)
         return [('id','in', list_users)]

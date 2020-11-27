@@ -10,7 +10,8 @@
                 <field name="name" />
                 <field name="identification"/>
                 <field name="gender"/>
-                <field name="date_birthday" />             
+                <field name="date_birthday" />   
+                <field name="qty_credits" string="Créditos restantes" />         
             </tree>
         </field>
     </record>
@@ -60,7 +61,7 @@
                             <field name="age" />
                         </group>
                         <group string="Informacion de usuario">
-                         <field name="user_id" />
+                         <field name="user_id" options="{'no_create': True, 'no_edit': True, 'no_open': True, 'no_create_edit':True}" />
                          <field name="qty_credits" />
                          <field name="phone" />
                          <field name="email" widget="email" />

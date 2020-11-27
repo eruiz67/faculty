@@ -13,6 +13,14 @@ class CourseGlobalScoreWizard(models.TransientModel):
     mark = fields.Float(string='Nota global', digits=(5,2), required=True)
     student_id = fields.Many2one('faculty.student', string='')
     course_ids = fields.Many2many('faculty.course', string='', related="student_id.course_ids")
+    
+    @api.constrains('mark')
+    def _constrains__mark(self):
+        for record in self:
+             if record.mark < 0 or record.mark>100:                
+	             raise ValidationError("La nota debe ser un valor entre  0 y 100")
+
+    
     @api.model
     def default_get(self, field_names):
         defaults = super(CourseGlobalScoreWizard, self).default_get(field_names)

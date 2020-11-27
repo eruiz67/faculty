@@ -27,6 +27,13 @@ class Course(models.Model):
     name = fields.Char(string='Nombre', required=True)
     description = fields.Char(string='Descripción', required=True)
     credits_required = fields.Integer(string='Creditos necesarios', required=True)
+
+    @api.constrains('credits_required')
+    def _constrains_credits_required(self):
+        for record in self:
+             if record.qty_credits < 0:                
+	             raise ValidationError("La cantidad de créditos asignados debe ser mayor o igual a cero")
+
     #profesor_ids = fields.Many2many('res.users', string='Profesores')
     student_ids =  fields.Many2many('faculty.student', string='Estudiantes')
     professor_ids  = fields.Many2many('faculty.professor', string='Profesores')
@@ -150,6 +157,14 @@ class Student(models.Model):
     qty_credits = fields.Integer(string='Creditos', required=True)
     
     identification = fields.Char(string='Carnet de Identidad', required =True, copy=False)
+
+    @api.constrains('identification')
+    def _check_identification (self):
+        # otra podria ser "[^@]+@[^@]+\.[^@]+"
+        for record in self:
+             if record.identification and not re.match(r"(^[\d]+$)", record.identification):                
+	             raise ValidationError("El carnet de identidad debe contener 11 números")
+
     _sql_constraints = [
         ('identification_unique',
          'UNIQUE(identification)',
@@ -172,6 +187,30 @@ class Student(models.Model):
     date_birthday = fields.Date(string='Fecha de nacimiento', required=True)
     email = fields.Char(string='Correo electrónico')
     phone = fields.Char(string='Celular')
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(Student, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='date_birthday']"):
+                node.set('options', "{'datepicker': {'maxDate': '%sT23:59:59'}}" % fields.Date.today().strftime(DEFAULT_SERVER_DATE_FORMAT))
+            res['arch'] = etree.tostring(doc)
+        return res 
+
+
+    @api.constrains('date_birthday')
+    def _constrains_birthday(self):
+        for record in self:
+            if record.date_birthday and record.date_birthday > fields.Date.today():
+                raise ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual")
+
+    @api.constrains('qty_credits')
+    def _constrains_qty_credits(self):
+        for record in self:
+             if record.qty_credits < 0:                
+	             raise ValidationError("La cantidad de créditos requeridos debe ser mayor o igual a cero")
+                
 
     @api.model
     def _get_default_image(self):
@@ -288,6 +327,8 @@ class Student(models.Model):
             'target': 'new',
         }
         return action
+
+
     
 
 """

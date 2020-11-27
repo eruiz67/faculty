@@ -4,7 +4,7 @@
         id="faculty_root_menu"
         name="Facultad"
                 groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
-        sequence="10"/>
+        sequence="0"/>
 
     <menuitem
         id="student_menu"
@@ -12,7 +12,7 @@
         action="students_action"
         groups="group_faculty_professor,group_faculty_admin"
         parent="faculty_root_menu"
-        sequence="20"/>
+        sequence="30"/>
 
     <menuitem
         id="courses_menu"
@@ -20,7 +20,7 @@
         action="courses_action"
         groups="group_faculty_professor,group_faculty_admin,group_faculty_student"
         parent="faculty_root_menu"
-        sequence="30"/>
+        sequence="20"/>
 
     <menuitem
         id="professor_menu"

@@ -15,6 +15,14 @@ class Professor(models.Model):
     user_id = fields.Many2one('res.users', string='Usuario', required= True, domain="[('professor_ids','=',False),('is_faculty_professor','=',True)]")
         
     identification = fields.Char(string='Carnet de Identidad', required =True, copy=False)
+
+    @api.constrains('identification')
+    def _check_identification (self):
+        # otra podria ser "[^@]+@[^@]+\.[^@]+"
+        for record in self:
+             if record.identification and not re.match(r"(^[\d]+$)", record.identification):                
+	             raise ValidationError("El carnet de identidad debe contener 11 números")
+                
     _sql_constraints = [
         ('identification_unique',
          'UNIQUE(identification)',
@@ -126,3 +134,23 @@ class Professor(models.Model):
                 
             self.student_ids=self.env['faculty.student'].sudo().browse(student_list) 
     
+
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(Professor, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='date_birthday']"):
+                node.set('options', "{'datepicker': {'maxDate': '%sT23:59:59'}}" % fields.Date.today().strftime(DEFAULT_SERVER_DATE_FORMAT))
+            res['arch'] = etree.tostring(doc)
+        return res 
+
+
+    @api.constrains('date_birthday')
+    def _constrains_birthday(self):
+        for record in self:
+            if record.date_birthday and record.date_birthday > fields.Date.today():
+                raise ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual")
+
+                
